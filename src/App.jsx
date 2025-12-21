@@ -57,7 +57,7 @@ const projects = [
     date: 'Azzorti 2025',
     // TODO: Replace these placeholder URLs with: pattern: pattern2, mockup: mockup2
     pattern: pattern2,
-    mockup: mockup2
+    mockup: mockup2,
   },
   {
     id: 3,
@@ -65,7 +65,7 @@ const projects = [
     date: 'Azzorti 2024',
     // TODO: Replace these placeholder URLs with: pattern: pattern3, mockup: mockup3
     pattern: pattern3,
-    mockup: mockup3
+    mockup: mockup3,
   },
   {
     id: 4,

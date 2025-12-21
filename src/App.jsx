@@ -33,8 +33,8 @@ import mockup1 from './assets/mockup1.png';
 // import mockup1 from './assets/mockup1.png';
 import pattern2 from './assets/pattern2.jpg';
 import mockup2 from './assets/mockup2.png';
-import pattern3 from './ASSETS/pattern3.jpg';
-import mockup3 from './ASSETS/mockup3.png';
+import pattern3 from './ASSETS/pattern3.JPG';
+import mockup3 from './ASSETS/mockup3.PNG';
 // import pattern4 from './assets/pattern4.png';
 // import mockup4 from './assets/mockup4.png';
 // import pattern5 from './assets/pattern5.png';
@@ -57,7 +57,7 @@ const projects = [
     date: 'Azzorti 2025',
     // TODO: Replace these placeholder URLs with: pattern: pattern2, mockup: mockup2
     pattern: pattern2,
-    mockup: mockup2,
+    mockup: mockup2
   },
   {
     id: 3,
@@ -65,7 +65,7 @@ const projects = [
     date: 'Azzorti 2024',
     // TODO: Replace these placeholder URLs with: pattern: pattern3, mockup: mockup3
     pattern: pattern3,
-    mockup: mockup3,
+    mockup: mockup3
   },
   {
     id: 4,
@@ -118,11 +118,11 @@ function App() {
     const lenis = new Lenis({
       wrapper: mainElement, // The scrollable element
       content: mainElement.querySelector('div'), // The inner content wrapper
-      orientation: 'horizontal',
-      gestureOrientation: 'both',
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 3,
-      touchMultiplier: 3,
+      wheelMultiplier: 1.5,
+      touchMultiplier: 2,
       infinite: false,
     });
     lenisRef.current = lenis;
@@ -133,20 +133,11 @@ function App() {
     }
     requestAnimationFrame(raf);
 
-    // Sync Lenis with the horizontal scroll
-    // Since document.documentElement doesn't naturally have a horizontal scroll height,
-    // we need to make sure the body/html can actually "scroll" or Lenis won't fire.
-    // However, the cleanest way in horizontal mode is to let Lenis handle the window's scrollLeft.
-
     // Scroll Listener for Pagination
     const handleScroll = () => {
-      const scrollLeft = mainElement.scrollLeft;
-      const width = window.innerWidth;
-      const index = Math.round(scrollLeft / width);
-      // activeIndex is now the global page index:
-      // 0 = HomeProfile
-      // 1..projects.length = Work Section
-      // projects.length + 1 = ContactSection
+      const scrollTop = mainElement.scrollTop;
+      const height = window.innerHeight;
+      const index = Math.round(scrollTop / height);
       setActiveIndex(index);
     };
 
@@ -159,11 +150,10 @@ function App() {
   }, []);
 
   const handlePageClick = (index) => {
-    // index is the global page index to scroll to
     if (lenisRef.current) {
-      lenisRef.current.scrollTo(index * window.innerWidth);
+      lenisRef.current.scrollTo(index * window.innerHeight);
     } else if (mainRef.current) {
-      mainRef.current.scrollTo({ left: index * window.innerWidth, behavior: 'smooth' });
+      mainRef.current.scrollTo({ top: index * window.innerHeight, behavior: 'smooth' });
     }
   };
 
@@ -180,7 +170,7 @@ function App() {
 
       <main
         ref={mainRef}
-        className="relative bg-neutral-900 w-full h-screen overflow-x-auto overflow-y-hidden selection:bg-white selection:text-black snap-x snap-mandatory"
+        className="relative bg-neutral-900 w-full h-screen overflow-y-auto overflow-x-hidden selection:bg-white selection:text-black snap-y snap-proximity"
       >
         <Navbar />
         <ProjectPagination
@@ -189,25 +179,30 @@ function App() {
           onPageClick={handlePageClick}
         />
 
-        {/* Horizontal Container */}
-        <div className="flex w-max h-full">
+        {/* Vertical Container */}
+        <div className="flex flex-col w-full">
 
           {/* Section 1: Landing Dashboard */}
-          <HomeProfile />
+          <section id="home" className="w-full h-screen snap-start">
+            <HomeProfile />
+          </section>
 
-          {/* Section 2: Work Section (Horizontal Loop) */}
-          <div id="work" className="flex">
+          {/* Section 2: Work Section */}
+          <div id="work" className="flex flex-col">
             {projects.map((project) => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                openModal={(p) => setSelectedProject(p)}
-              />
+              <section key={project.id} className="w-full h-screen snap-start">
+                <ProjectCard
+                  project={project}
+                  openModal={(p) => setSelectedProject(p)}
+                />
+              </section>
             ))}
           </div>
 
           {/* Section 3: Footer / Contact */}
-          <ContactSection />
+          <section id="contact" className="w-full h-screen snap-start">
+            <ContactSection />
+          </section>
         </div>
       </main>
     </>

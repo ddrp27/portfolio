@@ -1,14 +1,19 @@
 import { motion } from 'framer-motion';
 
 const ProjectPagination = ({ projects, activeIndex, onPageClick }) => {
+    // Only show dots on Work sections (index 1 to projects.length)
+    if (activeIndex === 0 || activeIndex > projects.length) return null;
+
     return (
         <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 flex gap-4">
             {projects.map((project, index) => {
-                const isActive = index === activeIndex;
+                // Project 1 is at page index 1, Project 2 at 2, etc.
+                const pageIndex = index + 1;
+                const isActive = pageIndex === activeIndex;
                 return (
                     <motion.button
                         key={project.id}
-                        onClick={() => onPageClick(index)}
+                        onClick={() => onPageClick(pageIndex)}
                         className={`rounded-full transition-colors duration-300 ${isActive ? 'bg-white' : 'bg-white/30 hover:bg-white/50'}`}
                         initial={false}
                         animate={{

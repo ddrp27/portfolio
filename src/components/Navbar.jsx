@@ -1,71 +1,55 @@
-import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 const Navbar = () => {
-    const [activeSection, setActiveSection] = useState('work');
-
-    useEffect(() => {
-        const sections = ['work', 'about', 'contact'];
-        const observers = [];
-
-        const observerCallback = (entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    setActiveSection(entry.target.id);
-                }
-            });
-        };
-
-        const observerOptions = {
-            root: null, // Use the viewport
-            threshold: 0.5, // Trigger when 50% visible. For wide horizontal sections, this might need tuning.
-        };
-
-        const observer = new IntersectionObserver(observerCallback, observerOptions);
-
-        sections.forEach((id) => {
-            const element = document.getElementById(id);
-            if (element) {
-                observer.observe(element);
-            }
-        });
-
-        return () => observer.disconnect();
-    }, []);
+    const scrollToSection = (id) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' });
+        }
+    };
 
     return (
-        <nav className="fixed bottom-0 left-0 w-full z-[100] px-8 py-8 flex justify-between items-end mix-blend-difference text-white pointer-events-none">
-            <div className="font-serif text-2xl tracking-tighter pointer-events-auto cursor-pointer flex flex-col">
-                <span className="leading-none">DANIEL</span>
-                <span className="leading-none italic text-neutral-400">DIAZ</span>
-            </div>
+        <motion.nav
+            initial={{ y: -50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 1 }}
+            // CAMBIO AQUÍ: Centramos el menú y le damos el estilo flotante
+            className="fixed top-6 right-6 md:top-10 md:right-10 z-50 pointer-events-none"
+        >
+            <div className="bg-black/20 backdrop-blur-md border border-white/10 px-8 py-4 rounded-full shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] pointer-events-auto overflow-hidden relative group">
 
-            <div className="flex gap-12 font-sans text-[10px] tracking-[0.4em] uppercase pointer-events-auto">
-                {[
-                    { label: 'Work', href: '#work', id: 'work' },
-                    { label: 'About', href: '#about', id: 'about' },
-                    { label: 'Contact', href: '#contact', id: 'contact' }
-                ].map((item) => (
-                    <a
-                        key={item.label}
-                        href={item.href}
-                        className={`relative transition-colors duration-300 ${activeSection === item.id ? 'text-white' : 'text-neutral-500 hover:text-neutral-300'}`}
-                        onClick={() => setActiveSection(item.id)} // Instant update on click
-                    >
-                        {item.label}
-                        {activeSection === item.id && (
-                            <motion.span
-                                layoutId="active-nav"
-                                className="absolute -bottom-2 left-0 w-full h-[1px] bg-white"
-                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                            />
-                        )}
-                    </a>
-                ))}
+                {/* Reflejo diagonal interno para realismo de cristal */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                <ul className="flex gap-8 relative z-10">
+                    <li>
+                        <button
+                            onClick={() => scrollToSection('home')}
+                            className="text-white text-[10px] font-black tracking-[0.3em] uppercase hover:text-neutral-400 transition-colors"
+                        >
+                            About
+                        </button>
+                    </li>
+                    <li>
+                        <button
+                            onClick={() => scrollToSection('work')}
+                            className="text-white text-[10px] font-black tracking-[0.3em] uppercase hover:text-neutral-400 transition-colors"
+                        >
+                            Work
+                        </button>
+                    </li>
+                    <li>
+                        <button
+                            onClick={() => scrollToSection('contact')}
+                            className="text-white text-[10px] font-black tracking-[0.3em] uppercase hover:text-neutral-400 transition-colors"
+                        >
+                            Contact
+                        </button>
+                    </li>
+                </ul>
             </div>
-        </nav>
+        </motion.nav>
     );
 };
 
 export default Navbar;
-

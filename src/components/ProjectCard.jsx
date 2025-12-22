@@ -3,36 +3,54 @@ import React, { useState, useEffect, useRef } from 'react';
 
 const ToolIcon = ({ type }) => {
     const icons = {
-        photoshop: { path: "M0 0v24h24V0H0zm6.65 15.688h1.493v2.335h-.023c-.312.443-.915.753-1.636.753-1.425 0-2.316-1.11-2.316-2.455 0-1.42.997-2.463 2.376-2.463.633 0 1.155.21 1.48.514l-.696 1.05c-.218-.188-.488-.316-.803-.316-.675 0-1.07.548-1.07 1.208 0 .66.41 1.223 1.103 1.223.368 0 .645-.165.81-.405v-.743H6.65v-.701zm5.275 2.872h-1.358v-4.52h1.358v4.52zm0-5.18h-1.358v-1.193h1.358v1.193z", color: "#31A8FF" },
-        illustrator: { path: "M0 0v24h24V0H0zm6.185 16.96l-.56 1.6h-1.5l2.25-6.04h1.61l2.25 6.04h-1.53l-.56-1.6h-1.96zm.32-1h1.33l-.66-1.91-.67 1.91zm5.42 2.6h-1.35v-4.52h1.35v4.52zm0-5.18h-1.35v-1.2h1.35v1.2z", color: "#FF9A00" },
-        gemini: { path: "M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z", color: "#8E75FF" }
+        photoshop: {
+            path: "M0 0v24h24V0H0zm10.5 15.3c-.5 0-.9-.1-1.2-.4-.3-.3-.4-.7-.4-1.2h1.4c0 .3.1.5.2.6.1.1.3.2.6.2.3 0 .5-.1.6-.3.1-.2.2-.4.2-.7 0-.3-.1-.6-.3-.7-.2-.1-.4-.2-.7-.2-.3 0-.6.1-.8.2l-.3-1h2.2v-1.1H8.3l.4 2.3c.3-.2.6-.3.9-.3.3 0 .6.1.7.2.2.1.3.4.3.7 0 .4-.1.7-.3.9-.3.3-.7.4-1.2.4zm5.2 0h-1.3v-4h-.1l-1.1.4-.2-1 1.6-.7h1.1v5.3z",
+            color: "#31A8FF"
+        },
+        illustrator: {
+            path: "M0 0v24h24V0H0zm9.4 15.5l-.6-1.8h-2l-.6 1.8H4.7L8 8.5h1.2l3.3 8h-3.1zm-.3-2.9L8.6 11h-.1l-.5 1.6h1.1zm6.4 2.9h-1.2v-4.5h1.2v4.5zm0-5.4h-1.2V8.9h1.2v1.2z",
+            color: "#FF9A00"
+        },
+        gemini: {
+            path: "M12 1L9 9l-8 3 8 3 3 8 3-8 8-3-8-3-3-8z",
+            color: "#8E75FF"
+        }
     };
     const icon = icons[type];
+    if (!icon) return null;
+
     return (
         <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md flex items-center justify-center group hover:bg-white/10 transition-all duration-300">
-            <svg viewBox="0 0 24 24" className="w-5 h-5 transition-transform group-hover:scale-110" fill={icon.color}><path d={icon.path} /></svg>
+            <svg viewBox="0 0 24 24" className="w-6 h-6 transition-transform group-hover:scale-110" fill={icon.color}>
+                <path d={icon.path} />
+            </svg>
         </div>
     );
 };
 
 const ProjectCard = ({ project }) => {
-    const { title, date, pattern, mockup, supportImages } = project;
+    const { id, title, date, pattern, mockup, supportImages, description, metricValue, metricLabel, tools } = project;
+
     const [isExpanded, setIsExpanded] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const containerRef = useRef(null);
 
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ["start end", "end start"]
-    });
+    // Resetear estados al cambiar de proyecto (Veracidad en React)
+    useEffect(() => {
+        setIsExpanded(false);
+        setSelectedImage(null);
+    }, [id]);
+
+    const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start end", "end start"] });
     const yParallax = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
 
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
-    const maskSize = useSpring(250, { stiffness: 70, damping: 20 });
+    const maskSize = useSpring(230, { stiffness: 70, damping: 20 });
 
     useEffect(() => {
-        maskSize.set(isExpanded ? 0 : 250);
+        maskSize.set(isExpanded ? 0 : 230);
+        document.body.style.overflow = isExpanded ? 'hidden' : 'unset';
     }, [isExpanded, maskSize]);
 
     const handleMouseMove = (e) => {
@@ -45,90 +63,110 @@ const ProjectCard = ({ project }) => {
 
     return (
         <div
+            key={id}
             ref={containerRef}
             className={`relative w-full h-full overflow-hidden bg-neutral-950 ${isExpanded ? 'cursor-default' : 'cursor-none'}`}
             onMouseMove={handleMouseMove}
             onClick={() => !selectedImage && !isExpanded && setIsExpanded(true)}
         >
-            {/* Capa de Mockup con Blur */}
+            {/* Capa 0: Mockup Fondo */}
             <div className="absolute inset-0 z-0">
-                <motion.img
-                    src={mockup}
-                    className="w-full h-[115%] object-cover"
-                    style={{ y: yParallax }}
-                    animate={{
-                        opacity: isExpanded ? 0.15 : 0.6,
-                        filter: isExpanded ? 'blur(30px)' : 'blur(0px)'
-                    }}
-                />
+                <motion.img src={mockup} className="w-full h-[115%] object-cover" style={{ y: yParallax }} animate={{ opacity: isExpanded ? 0.1 : 0.6, filter: isExpanded ? 'blur(20px)' : 'blur(0px)' }} />
             </div>
 
-            {/* Capa de Estampado (Pattern) */}
-            <motion.div
-                className="absolute inset-0 z-10 w-full h-full pointer-events-none"
-                style={{ maskImage, WebkitMaskImage: maskImage }}
-                animate={{ opacity: isExpanded ? 0 : 1 }}
-            >
+            {/* Capa 1: Pattern con Máscara */}
+            <motion.div className="absolute inset-0 z-10 w-full h-full pointer-events-none" style={{ maskImage, WebkitMaskImage: maskImage }} animate={{ opacity: isExpanded ? 0 : 1 }}>
                 <img src={pattern} alt="" className="w-full h-full object-cover" />
             </motion.div>
 
-            {/* Título Principal */}
+            {/* Capa 2: Título Principal (Extra Bold) */}
             <motion.div
                 className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none"
-                animate={{
-                    opacity: isExpanded ? 0 : 1,
-                    scale: isExpanded ? 0.8 : 1,
-                }}
+                animate={{ opacity: isExpanded ? 0 : 1, scale: isExpanded ? 0.8 : 1 }}
+                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             >
-                <h1 className="font-['Gilroy',_sans-serif] text-6xl md:text-8xl lg:text-[10rem] font-extrabold uppercase tracking-tighter leading-none text-center px-10 select-none mix-blend-overlay"
-                    style={{ WebkitTextStroke: '1px rgba(255, 255, 255, 0.3)' }}
+                <h1
+                    className="text-6xl md:text-8xl lg:text-[11rem] uppercase tracking-tighter leading-none text-center px-10 select-none"
+                    style={{
+                        fontFamily: "'Gilroy', sans-serif",
+                        fontWeight: 900,
+                        mixBlendMode: 'overlay',
+                        color: 'rgba(255, 255, 255, 0.85)',
+                        WebkitTextStroke: '2px rgba(255, 255, 255, 0.15)',
+                        filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.4))',
+                    }}
                 >
                     {title}
                 </h1>
             </motion.div>
 
-            {/* Bento Grid de Información */}
+            {/* BOTÓN "DETAILS" (CORREGIDO) */}
+            <AnimatePresence>
+                {!isExpanded && (
+                    <motion.div
+                        className="absolute bottom-16 left-1/2 z-30 pointer-events-auto"
+                        initial={{ opacity: 0, y: 20, x: "-50%" }}
+                        animate={{ opacity: 1, y: 0, x: "-50%" }}
+                        exit={{ opacity: 0, y: 10, x: "-50%" }}
+                        transition={{ delay: 0.8 }}
+                    >
+                        <button
+                            onClick={(e) => { e.stopPropagation(); setIsExpanded(true); }}
+                            className="group relative px-10 py-4 rounded-full transition-all duration-300 hover:scale-105 flex items-center justify-center"
+                        >
+                            <div className="absolute inset-0 bg-white/5 backdrop-blur-md border border-white/20 rounded-full group-hover:bg-white/10 transition-all" />
+                            <span className="relative z-10 text-white font-['Gilroy'] text-[10px] font-black uppercase tracking-[0.4em] pr-[0.4em] whitespace-nowrap">
+                                View Details
+                            </span>
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* PANEL BENTO GRID (EXPANDIDO) */}
             <AnimatePresence>
                 {isExpanded && (
-                    <motion.div
-                        className="absolute inset-0 z-40 flex items-center justify-center p-6 md:p-12 overflow-y-auto"
-                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                    >
-                        <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-12 gap-4 pointer-events-auto my-auto">
+                    <motion.div data-lenis-prevent className="fixed inset-0 z-50 flex items-center justify-center p-6 md:p-12 overflow-y-auto bg-black/40 backdrop-blur-xl" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                        <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-12 gap-4 pointer-events-auto my-auto py-20">
 
-                            <motion.div className="md:col-span-12" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
-                                <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-white">{title}</h2>
-                                <p className="text-emerald-400 text-[10px] tracking-[0.4em] uppercase font-black">{date}</p>
-                            </motion.div>
+                            <div className="md:col-span-12 mb-6 text-center md:text-left">
+                                <h2 className="text-4xl md:text-7xl font-black uppercase tracking-tighter text-white leading-none">{title}</h2>
+                                <p className="text-white/40 text-[10px] tracking-[0.5em] uppercase font-black mt-3">{date}</p>
+                            </div>
 
-                            <motion.div className="md:col-span-8 bg-white/5 border border-white/10 rounded-[30px] p-8" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}>
-                                <p className="text-lg md:text-xl text-white/90 leading-tight mb-8">
-                                    Exploración táctil y digital. El estampado se diseñó para maximizar la conversión visual en retail, logrando una estética mediterránea moderna.
+                            <div className="md:col-span-8 bg-white/5 border border-white/10 backdrop-blur-md rounded-[30px] p-10 flex flex-col justify-between">
+                                <p className="text-lg md:text-xl text-white/90 leading-tight font-light italic">
+                                    {description || "No description provided."}
                                 </p>
-                                <div className="flex gap-3">
-                                    <ToolIcon type="photoshop" />
-                                    <ToolIcon type="illustrator" />
-                                    <ToolIcon type="gemini" />
+                                <div className="mt-10 flex gap-3">
+                                    {tools?.map(tool => <ToolIcon key={tool} type={tool} />)}
                                 </div>
-                            </motion.div>
+                            </div>
 
-                            <motion.div className="md:col-span-4 bg-emerald-500 rounded-[30px] p-8 text-black" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
-                                <h3 className="text-5xl font-black tracking-tighter leading-none">+45%</h3>
-                                <p className="text-[10px] font-bold uppercase tracking-widest mt-1">Growth Yield</p>
-                                <p className="text-xs mt-4 font-medium leading-tight text-black/70">Eficiencia en la producción y alto impacto comercial.</p>
-                            </motion.div>
+                            <div className="md:col-span-4 bg-white/10 border border-white/20 backdrop-blur-lg rounded-[30px] p-10 flex flex-col justify-center text-center">
+                                <h3 className="text-6xl font-black tracking-tighter text-white leading-none">
+                                    {metricValue || "0%"}
+                                </h3>
+                                <p className="text-[10px] text-white/50 font-bold uppercase tracking-widest mt-2">
+                                    {metricLabel || "Metric"}
+                                </p>
+                            </div>
 
-                            <motion.div className="md:col-span-12 grid grid-cols-2 md:grid-cols-4 gap-4" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }}>
+                            <div className="md:col-span-12 grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                                 {(supportImages || []).slice(0, 4).map((img, i) => (
-                                    <div key={i} className="aspect-square rounded-2xl overflow-hidden border border-white/10 cursor-pointer group" onClick={() => setSelectedImage(img)}>
-                                        <img src={img} className="w-full h-full object-cover transition-transform group-hover:scale-110" alt="Support" />
+                                    <div key={`${id}-img-${i}`} className="aspect-square rounded-2xl overflow-hidden border border-white/10 cursor-pointer bg-white/5 group" onClick={() => setSelectedImage(img)}>
+                                        <img src={img} className="w-full h-full object-cover opacity-70 transition-all duration-500 group-hover:scale-110 group-hover:opacity-100" alt="" />
                                     </div>
                                 ))}
-                            </motion.div>
+                            </div>
 
-                            <div className="md:col-span-12 flex justify-center mt-4">
-                                <button onClick={(e) => { e.stopPropagation(); setIsExpanded(false); }} className="px-8 py-3 bg-white text-black text-[10px] font-black uppercase tracking-[0.3em] rounded-full hover:bg-neutral-200 transition-colors">
-                                    Cerrar Detalles
+                            <div className="md:col-span-12 flex justify-center mt-12">
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); setIsExpanded(false); }}
+                                    className="group relative px-12 py-4 overflow-hidden rounded-full transition-all"
+                                >
+                                    <div className="absolute inset-0 bg-white/10 backdrop-blur-md border border-white/20 rounded-full group-hover:bg-white/20 transition-all" />
+                                    <span className="relative z-10 text-white text-[10px] font-black uppercase tracking-[0.4em] pr-[0.4em]">Go Back</span>
                                 </button>
                             </div>
                         </div>
@@ -136,11 +174,11 @@ const ProjectCard = ({ project }) => {
                 )}
             </AnimatePresence>
 
-            {/* Lightbox para ver la imagen de apoyo en grande */}
+            {/* LIGHTBOX */}
             <AnimatePresence>
                 {selectedImage && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] flex items-center justify-center p-10 bg-black/95 backdrop-blur-2xl cursor-pointer" onClick={() => setSelectedImage(null)}>
-                        <motion.img initial={{ scale: 0.9 }} animate={{ scale: 1 }} src={selectedImage} className="max-w-full max-h-full object-contain rounded-3xl" />
+                        <motion.img initial={{ scale: 0.9 }} animate={{ scale: 1 }} src={selectedImage} className="max-w-full max-h-full object-contain rounded-3xl shadow-2xl" />
                     </motion.div>
                 )}
             </AnimatePresence>

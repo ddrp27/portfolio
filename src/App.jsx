@@ -1,18 +1,20 @@
 import { useEffect, useState, useRef } from 'react';
 import Lenis from 'lenis';
-import { AnimatePresence } from 'framer-motion';
 import Navbar from './components/Navbar';
 import HomeProfile from './components/HomeProfile';
 import ProjectCard from './components/ProjectCard';
 import ContactSection from './components/ContactSection';
 import ProjectPagination from './components/ProjectPagination';
 
-// Imports de activos (Verifica que existan en src/assets/)
+// Assets
 import pattern1 from './assets/pattern1.jpg';
 import mockup1 from './assets/mockup1.png';
+import img1 from './assets/s-image1.png';
+import img2 from './assets/s-image2.png';
+import img3 from './assets/s-image3.png';
+import img4 from './assets/s-image4.png';
 import pattern2 from './assets/pattern2.jpg';
 import mockup2 from './assets/mockup2.png';
-// Ojo: Si la carpeta es 'assets', úsala siempre en minúsculas para evitar líos en Vercel
 import pattern3 from './assets/pattern3.jpg';
 import mockup3 from './assets/mockup3.png';
 
@@ -23,44 +25,40 @@ const projects = [
     date: 'Azzorti 2025',
     pattern: pattern1,
     mockup: mockup1,
-    // Agregamos imágenes de apoyo reales aquí
-    supportImages: [pattern1, mockup1, pattern1, mockup1]
+    // NUEVOS CAMPOS DINÁMICOS:
+    description: "This collection was engineered to capture the transitional essence of the 2025 season by blending timeless Mediterranean aesthetics with data-driven retail trends. The project required a meticulous balance between high-impact visual design and manufacturing feasibility, ensuring a cohesive story across multiple product categories.",
+    metricValue: "+45%",
+    metricLabel: "Growth Yield",
+    supportImages: [img1, img2, img3, img4], // Aquí pones las fotos únicas de este proyecto
+    tools: ['photoshop', 'illustrator', 'gemini']
   },
-  {
-    id: 2,
-    title: 'Bohemian Breeze',
-    date: 'Azzorti 2025',
-    pattern: pattern2,
-    mockup: mockup2,
-    supportImages: [pattern2, mockup2, pattern2, mockup2]
-  },
-  {
-    id: 3,
-    title: 'Classic Contrast',
-    date: 'Azzorti 2024',
-    pattern: pattern3,
-    mockup: mockup3,
-    supportImages: [pattern3, mockup3, pattern3, mockup3]
-  }
+  // Repite la estructura para el Proyecto 2, 3, etc.
+
+  { id: 2, title: 'Bohemian Breeze', date: 'Azzorti 2025', pattern: pattern2, mockup: mockup2, supportImages: [pattern2, mockup2, pattern2, mockup2] },
+  { id: 3, title: 'Classic Contrast', date: 'Azzorti 2024', pattern: pattern3, mockup: mockup3, supportImages: [pattern3, mockup3, pattern3, mockup3] }
 ];
 
 function App() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const mainRef = useRef(null);
   const lenisRef = useRef(null);
 
   useEffect(() => {
-    const mainElement = mainRef.current;
-    if (!mainElement) return;
-
     const lenis = new Lenis({
-      wrapper: mainElement,
-      content: mainElement.querySelector('.scroll-content'),
-      orientation: 'vertical',
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
-      wheelMultiplier: 1.2,
+      // Activamos el snap si las secciones tienen el atributo data-lenis-snap
+      lerp: 0.1,
     });
+
     lenisRef.current = lenis;
+
+    // Truco para simular el SNAP:
+    // Escuchamos cuando el usuario deja de scrollear y lo llevamos a la sección más cercana
+    lenis.on('scroll', () => {
+      // Aquí podrías añadir lógica personalizada, pero Lenis 
+      // por sí solo no tiene un "snap-proximity" nativo de un click.
+    });
 
     function raf(time) {
       lenis.raf(time);
@@ -68,54 +66,34 @@ function App() {
     }
     requestAnimationFrame(raf);
 
-    const handleScroll = () => {
-      const scrollTop = mainElement.scrollTop;
-      const height = window.innerHeight;
-      const index = Math.round(scrollTop / height);
-      setActiveIndex(index);
-    };
-
-    mainElement.addEventListener('scroll', handleScroll);
-    return () => {
-      lenis.destroy();
-      mainElement.removeEventListener('scroll', handleScroll);
-    };
+    return () => lenis.destroy();
   }, []);
 
   const handlePageClick = (index) => {
-    if (lenisRef.current) {
-      lenisRef.current.scrollTo(index * window.innerHeight);
-    }
+    lenisRef.current?.scrollTo(index * window.innerHeight);
   };
 
   return (
     <div className="bg-neutral-900 text-white selection:bg-white selection:text-black">
       <Navbar />
-      <ProjectPagination
-        projects={projects}
-        activeIndex={activeIndex}
-        onPageClick={handlePageClick}
-      />
+      <ProjectPagination projects={projects} activeIndex={activeIndex} onPageClick={handlePageClick} />
 
-      <main
-        ref={mainRef}
-        className="h-screen overflow-y-auto snap-y snap-mandatory"
-      >
-        <div className="scroll-content flex flex-col w-full">
-          <section id="home" className="h-screen snap-start">
-            <HomeProfile />
-          </section>
+      <main className="relative w-full">
+        <section id="home" className="h-screen w-full">
+          <HomeProfile />
+        </section>
 
+        <div id="work">
           {projects.map((project) => (
-            <section key={project.id} className="h-screen snap-start">
+            <section key={project.id} className="h-screen w-full">
               <ProjectCard project={project} />
             </section>
           ))}
-
-          <section id="contact" className="h-screen snap-start">
-            <ContactSection />
-          </section>
         </div>
+
+        <section id="contact" className="h-screen w-full">
+          <ContactSection />
+        </section>
       </main>
     </div>
   );

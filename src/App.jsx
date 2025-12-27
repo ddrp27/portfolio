@@ -4,6 +4,7 @@ import Home from './components/sections/Home';
 import Projects from './components/sections/Projects';
 import Contact from './components/sections/Contact';
 import ProjectModal from './components/ui/ProjectModal';
+import viteLogo from '/vite.svg'
 
 // Assets
 import pattern1 from './assets/pattern1.webp';

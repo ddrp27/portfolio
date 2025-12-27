@@ -20,7 +20,7 @@ export default function Home() {
 
     return (
         // CAMBIO 1: Gradiente más oscuro y elegante (Taupe/Dark Coffee) para contraste premium
-        <div className="relative min-h-screen flex flex-col md:flex-row overflow-hidden bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#5e5348] via-[#4a4036] to-[#2e2620]">
+        <div className="relative min-h-screen flex flex-col md:flex-row overflow-hidden bg-gradient-to-r from-[#bea48e] to-[#b19177]">
 
             {/* Floating Particles - Behind portrait */}
             <FloatingParticles count={isMobile ? 12 : 30} />
@@ -118,4 +118,5 @@ export default function Home() {
 
         </div>
     );
+
 }

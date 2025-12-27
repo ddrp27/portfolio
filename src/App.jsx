@@ -1,10 +1,9 @@
 import { useEffect, useState, useRef } from 'react';
 import Lenis from 'lenis';
-import Navbar from './components/Navbar';
-import HomeProfile from './components/HomeProfile';
-import ProjectCard from './components/ProjectCard';
-import ContactSection from './components/ContactSection';
-import ProjectPagination from './components/ProjectPagination';
+import Home from './components/sections/Home';
+import Projects from './components/sections/Projects';
+import Contact from './components/sections/Contact';
+import ProjectModal from './components/ui/ProjectModal';
 
 // Assets
 import pattern1 from './assets/pattern1.jpg';
@@ -25,21 +24,40 @@ const projects = [
     date: 'Azzorti 2025',
     pattern: pattern1,
     mockup: mockup1,
-    // NUEVOS CAMPOS DINÁMICOS:
-    description: "Mediterranean Dreams is a commercially focused textile collection developed to deliver a fresh, timeless visual identity aligned with warm-climate consumer behavior and everyday wear. The collection is anchored in botanical print design, reinterpreted through a clean, contemporary lens to ensure retail relevance and long-term usability.The color strategy is built around high-contrast neutrals and Mediterranean blues, enabling strong visual impact while maintaining versatility across multiple product categories, including dresses, tops, knitwear, and coordinated separates. The print was engineered for cross-category scalability, ensuring consistency in both flat presentation and on-body application.",
+    description: "Mediterranean Dreams is a commercially focused textile collection developed to deliver a fresh, timeless visual identity aligned with warm-climate consumer behavior and everyday wear. The collection is anchored in botanical print design, reinterpreted through a clean, contemporary lens to ensure retail relevance and long-term usability.The color strategy is built around high-contrast neutrals and Mediterranean blues, enabling strong visual impact while maintaining versatility across multiple product categories.",
     metricValue: "6052",
     metricLabel: "Sales Units",
-    supportImages: [img1, img2, img3,], // Aquí pones las fotos únicas de este proyecto
+    supportImages: [img1, img2, img3],
     tools: ['photoshop', 'illustrator', 'gemini']
   },
-  // Repite la estructura para el Proyecto 2, 3, etc.
-
-  { id: 2, title: 'Bohemian Breeze', date: 'Azzorti 2025', pattern: pattern2, mockup: mockup2, supportImages: [pattern2, mockup2, pattern2, mockup2] },
-  { id: 3, title: 'Classic Contrast', date: 'Azzorti 2024', pattern: pattern3, mockup: mockup3, supportImages: [pattern3, mockup3, pattern3, mockup3] }
+  {
+    id: 2,
+    title: 'Bohemian Breeze',
+    date: 'Azzorti 2025',
+    pattern: pattern2,
+    mockup: mockup2,
+    description: "A free-spirited collection featuring intricate paisley patterns and relaxed silhouettes. Designed for the modern bohemian, this collection emphasizes comfort without compromising on style. The palette utilizes warm earth tones mixed with vibrant accents to create a dynamic visual experience.",
+    metricValue: "4120",
+    metricLabel: "Sales Units",
+    supportImages: [pattern2, mockup2, pattern2, mockup2],
+    tools: ['illustrator', 'photoshop']
+  },
+  {
+    id: 3,
+    title: 'Classic Contrast',
+    date: 'Azzorti 2024',
+    pattern: pattern3,
+    mockup: mockup3,
+    description: "Reimagining classic motifs with a high-contrast black and white approach. This collection focuses on geometric precision and bold statements suitable for formal and semi-formal wear. It bridges the gap between traditional elegance and modern minimalism.",
+    metricValue: "3890",
+    metricLabel: "Sales Units",
+    supportImages: [pattern3, mockup3, pattern3, mockup3],
+    tools: ['photoshop']
+  }
 ];
 
 function App() {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [selectedProject, setSelectedProject] = useState(null);
   const lenisRef = useRef(null);
 
   useEffect(() => {
@@ -53,13 +71,6 @@ function App() {
     lenisRef.current = lenis;
     window.lenis = lenis;
 
-    // Track active index based on scroll position
-    lenis.on('scroll', ({ scroll }) => {
-      const vh = window.innerHeight;
-      const index = Math.round(scroll / vh);
-      setActiveIndex(index);
-    });
-
     function raf(time) {
       lenis.raf(time);
       requestAnimationFrame(raf);
@@ -72,32 +83,34 @@ function App() {
     };
   }, []);
 
-  const handlePageClick = (index) => {
-    lenisRef.current?.scrollTo(index * window.innerHeight);
-  };
-
   return (
-    <div className="bg-neutral-900 text-white selection:bg-white selection:text-black">
-      <Navbar />
-      <ProjectPagination projects={projects} activeIndex={activeIndex} onPageClick={handlePageClick} />
+    <div className="bg-neutral-900 min-h-screen text-white selection:bg-[#958771] selection:text-white font-sans">
 
       <main className="relative w-full">
-        <section id="home" className="h-screen w-full">
-          <HomeProfile />
+        {/* Sections */}
+        <section id="home">
+          <Home />
         </section>
 
-        <div id="work">
-          {projects.map((project, index) => (
-            <section key={project.id} id={`project-${project.id}`} className="h-screen w-full">
-              <ProjectCard project={project} />
-            </section>
-          ))}
-        </div>
+        <section id="work" className="relative z-10">
+          <Projects
+            projects={projects}
+            onProjectClick={setSelectedProject}
+          />
+        </section>
 
-        <section id="contact" className="h-screen w-full">
-          <ContactSection />
+        <section id="contact">
+          <Contact />
         </section>
       </main>
+
+      {/* Modal - Rendered at root level for accessibility and z-index handling */}
+      <ProjectModal
+        project={selectedProject}
+        isOpen={!!selectedProject}
+        onClose={() => setSelectedProject(null)}
+      />
+
     </div>
   );
 }

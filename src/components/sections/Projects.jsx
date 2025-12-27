@@ -21,7 +21,7 @@ export default function Projects({ projects, onProjectClick }) {
                             onClick={() => onProjectClick(project)}
                         >
                             <ParallaxWrapper offset={index % 2 === 0 ? 20 : 60}>
-                                <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] bg-neutral-900 mb-6">
+                                <div className="relative aspect-video overflow-hidden rounded-[2rem] bg-neutral-900 mb-6">
                                     {/* MOCKUP IMAGE ONLY - NO PATTERN */}
                                     <motion.img
                                         src={project.mockup}

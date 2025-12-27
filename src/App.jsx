@@ -6,16 +6,16 @@ import Contact from './components/sections/Contact';
 import ProjectModal from './components/ui/ProjectModal';
 
 // Assets
-import pattern1 from './assets/pattern1.png';
-import mockup1 from './assets/mockup1.jpg';
-import img1 from './assets/s-image1.png';
-import img2 from './assets/s-image2.png';
-import img3 from './assets/s-image3.png';
+import pattern1 from './assets/pattern1.webp';
+import mockup1 from './assets/mockup1.webp';
+import img1 from './assets/s-image1.webp';
+import img2 from './assets/s-image2.webp';
+import img3 from './assets/s-image3.webp';
 
-import pattern2 from './assets/pattern2.png';
-import mockup2 from './assets/mockup2.jpg';
-import pattern3 from './assets/pattern3.png';
-import mockup3 from './assets/mockup3.jpg';
+import pattern2 from './assets/pattern2.webp';
+import mockup2 from './assets/mockup2.webp';
+import pattern3 from './assets/pattern3.webp';
+import mockup3 from './assets/mockup3.webp';
 
 const projects = [
   {

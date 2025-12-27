@@ -29,13 +29,12 @@ export default function ProjectModal({ project, isOpen, onClose }) {
                         transition={{ type: "spring", damping: 25, stiffness: 300 }}
                     >
                         {/* BACKGROUND PATTERN (Only visible here) */}
-                        <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
+                        <div className="absolute inset-0 z-0 opacity-50 pointer-events-none">
                             <img
                                 src={project.pattern}
                                 className="w-full h-full object-cover"
                                 alt="Decorative Pattern"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/50 to-transparent" />
                         </div>
 
                         {/* Close Button - Mobile Accessible */}
@@ -47,21 +46,22 @@ export default function ProjectModal({ project, isOpen, onClose }) {
                         </button>
 
                         {/* Content Left: Visuals */}
-                        <div className="relative z-10 w-full md:w-1/2 p-6 md:p-12 flex flex-col justify-end min-h-[40vh]">
+                        <div className="relative z-10 w-full md:w-1/2 p-6 md:p-12 md:pr-8 flex flex-col justify-end min-h-[40vh]">
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.2 }}
+                                className="drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
                             >
-                                <span className="text-secondary tracking-[0.5em] text-xs font-bold uppercase mb-4 block">
+                                <span className="text-secondary tracking-[0.5em] text-xs font-bold uppercase mb-4 block" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>
                                     {project.date}
                                 </span>
-                                <h2 className="text-4xl md:text-6xl font-black uppercase leading-none text-white mb-6">
+                                <h2 className="text-4xl md:text-5xl font-black uppercase leading-none text-white mb-6" style={{ textShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
                                     {project.title}
                                 </h2>
                                 <div className="flex gap-4">
                                     {project.tools?.map((tool, i) => (
-                                        <span key={i} className="px-4 py-2 rounded-full border border-white/10 bg-white/5 text-xs uppercase tracking-wider text-white/70">
+                                        <span key={i} className="px-4 py-2 rounded-full border border-white/10 bg-black/40 backdrop-blur-sm text-xs uppercase tracking-wider text-white/90">
                                             {tool}
                                         </span>
                                     ))}

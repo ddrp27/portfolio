@@ -18,7 +18,7 @@ const ContactSection = () => {
                     <span className="font-['Gilroy',_sans-serif] text-5xl md:text-8xl lg:text-9xl text-white uppercase tracking-tighter font-bold">
                         Let's
                     </span>
-                    <span className="font-['Luxurious_Script'] text-7xl md:text-[9rem] lg:text-[11rem] text-white-400 normal-case leading-none drop-shadow-white -ml-2">
+                    <span className="font-['Luxurious_Script'] text-6xl md:text-[9rem] lg:text-[11rem] text-white-400 normal-case leading-none drop-shadow-white -ml-2">
                         Connect
                     </span>
                 </h2>
@@ -37,7 +37,7 @@ const ContactSection = () => {
                         <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                         {/* Texto del Botón */}
-                        <span className="relative z-10 text-white font-['Gilroy'] text-[11px] font-black uppercase tracking-[0.6em] ml-[0.6em]">
+                        <span className="relative z-10 text-white font-['Gilroy-bold'] text-[11px] font-black uppercase tracking-[0.6em] ml-[0.6em]">
                             Send an E-mail
                         </span>
                     </a>
@@ -48,7 +48,7 @@ const ContactSection = () => {
                             href="https://www.linkedin.com/in/daniel-diaz-r/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-neutral-500 hover:text-white font-['Gilroy'] text-[10px] font-bold uppercase tracking-[0.4em] transition-all duration-300 hover:tracking-[0.5em]"
+                            className="text-neutral-500 hover:text-white font-['Gilroy-bold'] text-[10px] font-bold uppercase tracking-[0.4em] transition-all duration-300 hover:tracking-[0.5em]"
                         >
                             LinkedIn
                         </a>

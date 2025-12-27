@@ -12,7 +12,7 @@ import mockup1 from './assets/mockup1.png';
 import img1 from './assets/s-image1.png';
 import img2 from './assets/s-image2.png';
 import img3 from './assets/s-image3.png';
-import img4 from './assets/s-image4.png';
+
 import pattern2 from './assets/pattern2.jpg';
 import mockup2 from './assets/mockup2.png';
 import pattern3 from './assets/pattern3.jpg';
@@ -26,10 +26,10 @@ const projects = [
     pattern: pattern1,
     mockup: mockup1,
     // NUEVOS CAMPOS DINÁMICOS:
-    description: "This collection was engineered to capture the transitional essence of the 2025 season by blending timeless Mediterranean aesthetics with data-driven retail trends. The project required a meticulous balance between high-impact visual design and manufacturing feasibility, ensuring a cohesive story across multiple product categories.",
-    metricValue: "+45%",
-    metricLabel: "Growth Yield",
-    supportImages: [img1, img2, img3, img4], // Aquí pones las fotos únicas de este proyecto
+    description: "Mediterranean Dreams is a commercially focused textile collection developed to deliver a fresh, timeless visual identity aligned with warm-climate consumer behavior and everyday wear. The collection is anchored in botanical print design, reinterpreted through a clean, contemporary lens to ensure retail relevance and long-term usability.The color strategy is built around high-contrast neutrals and Mediterranean blues, enabling strong visual impact while maintaining versatility across multiple product categories, including dresses, tops, knitwear, and coordinated separates. The print was engineered for cross-category scalability, ensuring consistency in both flat presentation and on-body application.",
+    metricValue: "6052",
+    metricLabel: "Sales Units",
+    supportImages: [img1, img2, img3,], // Aquí pones las fotos únicas de este proyecto
     tools: ['photoshop', 'illustrator', 'gemini']
   },
   // Repite la estructura para el Proyecto 2, 3, etc.
@@ -47,17 +47,17 @@ function App() {
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
-      // Activamos el snap si las secciones tienen el atributo data-lenis-snap
       lerp: 0.1,
     });
 
     lenisRef.current = lenis;
+    window.lenis = lenis;
 
-    // Truco para simular el SNAP:
-    // Escuchamos cuando el usuario deja de scrollear y lo llevamos a la sección más cercana
-    lenis.on('scroll', () => {
-      // Aquí podrías añadir lógica personalizada, pero Lenis 
-      // por sí solo no tiene un "snap-proximity" nativo de un click.
+    // Track active index based on scroll position
+    lenis.on('scroll', ({ scroll }) => {
+      const vh = window.innerHeight;
+      const index = Math.round(scroll / vh);
+      setActiveIndex(index);
     });
 
     function raf(time) {
@@ -66,7 +66,10 @@ function App() {
     }
     requestAnimationFrame(raf);
 
-    return () => lenis.destroy();
+    return () => {
+      lenis.destroy();
+      window.lenis = null;
+    };
   }, []);
 
   const handlePageClick = (index) => {
@@ -84,8 +87,8 @@ function App() {
         </section>
 
         <div id="work">
-          {projects.map((project) => (
-            <section key={project.id} className="h-screen w-full">
+          {projects.map((project, index) => (
+            <section key={project.id} id={`project-${project.id}`} className="h-screen w-full">
               <ProjectCard project={project} />
             </section>
           ))}

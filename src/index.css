@@ -1,14 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  background-color: #0a0a0a;
+  --bg-dark: #0a0a0a;
+  --accent-primary: #958771;
+  /* Original Earthy Tone */
+  --accent-secondary: #c2b4a1;
+  /* Sand */
+  --accent-tertiary: #5c5346;
+  /* Deep Stone */
+  --glass-bg: rgba(255, 255, 255, 0.02);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: 24px;
 }
 
-html.lenis, html.lenis body {
+html.lenis,
+html.lenis body {
   height: auto;
 }
 
@@ -35,6 +45,8 @@ html.lenis, html.lenis body {
 
 body {
   margin: 0;
+  background-color: var(--bg-dark);
+  color: #fff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -44,11 +56,41 @@ body {
   box-sizing: border-box;
 }
 
+@layer components {
+  .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+  }
+
+  .mesh-gradient {
+    background-color: #0b0b0d;
+    background-image:
+      radial-gradient(at 0% 0%, hsla(38, 15%, 15%, 1) 0, transparent 60%),
+      radial-gradient(at 50% 0%, hsla(35, 10%, 10%, 1) 0, transparent 60%),
+      radial-gradient(at 100% 0%, hsla(40, 8%, 12%, 1) 0, transparent 60%);
+  }
+}
+
 @layer base {
   html {
-    @apply antialiased;
+    @apply antialiased scroll-smooth;
+    scroll-snap-type: y mandatory;
+    height: 100%;
+    overflow-y: scroll;
   }
+
   body {
-    @apply bg-neutral-900 text-neutral-100; /* Dark premium background */
+    @apply bg-neutral-950 text-neutral-100;
+    margin: 0;
+    height: 100%;
   }
+}
+
+/* Ensure sections snap to top */
+section,
+[id="work"]>section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
